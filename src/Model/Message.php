@@ -2,12 +2,11 @@
 
 namespace App\Model;
 
+use App\Enum\MessageTypeEnum;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class Message
 {
-    public const TYPE_SMS = 'sms';
-    public const TYPE_EMAIL = 'email';
 
     /**
      * @Assert\NotBlank(message="body cannot be empty", payload="101")
@@ -17,7 +16,7 @@ class Message
     /**
      * @Assert\NotBlank(message="type cannot be blank", payload="102")
      */
-    public string $type = self::TYPE_EMAIL;
+    public string $type = MessageTypeEnum::TYPE_EMAIL;
 
     public function getBody(): string
     {

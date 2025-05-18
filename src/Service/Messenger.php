@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Exception\MessengerException;
 use App\Model\Message;
 use App\Service\MessageSenders\SenderInterface;
 
@@ -20,6 +21,11 @@ class Messenger
         $this->senders = $senders;
     }
 
+    /**
+     * @param Message $message
+     *
+     * @throws MessengerException
+     */
     public function send(Message $message): void
     {
         foreach ($this->senders as $sender) {
@@ -30,7 +36,7 @@ class Messenger
             }
         }
 
-        throw new \InvalidArgumentException(sprintf(
+        throw new MessengerException(sprintf(
             'Unsupported message type %s',
             $message->getType(),
         ));

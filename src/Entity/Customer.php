@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Model\Message;
+use App\Enum\MessageTypeEnum;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -24,7 +24,7 @@ class Customer
     /**
      * @ORM\Column(name="`notification_type`", type="string", length=32)
      */
-    public string $notificationType = Message::TYPE_EMAIL;
+    public string $notificationType = MessageTypeEnum::TYPE_EMAIL;
 
     public function getCode(): string
     {

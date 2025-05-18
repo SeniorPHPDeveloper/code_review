@@ -2,6 +2,8 @@
 
 namespace App\Tests\Integrational;
 
+use App\Enum\MessageTypeEnum;
+use App\Exception\MessengerException;
 use App\Model\Message;
 use App\Service\Messenger;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -42,7 +44,7 @@ class MessengerTest extends KernelTestCase
     {
         $type = 'unsupported message type';
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(MessengerException::class);
         $this->expectExceptionMessage(sprintf(
             'Unsupported message type %s',
             $type
@@ -55,15 +57,15 @@ class MessengerTest extends KernelTestCase
     {
         return [
             'Message to be sent by SMS' => [
-                'message' => $this->createMessage(Message::TYPE_SMS),
+                'message' => $this->createMessage(MessageTypeEnum::TYPE_SMS),
 
-                'expectedOutput' => strtoupper(Message::TYPE_SMS),
+                'expectedOutput' => strtoupper(MessageTypeEnum::TYPE_SMS),
             ],
 
             'Message to be sent by Email' => [
-                'message' => $this->createMessage(Message::TYPE_EMAIL),
+                'message' => $this->createMessage(MessageTypeEnum::TYPE_EMAIL),
 
-                'expectedOutput' => strtoupper(Message::TYPE_EMAIL),
+                'expectedOutput' => strtoupper(MessageTypeEnum::TYPE_EMAIL),
             ],
         ];
     }
