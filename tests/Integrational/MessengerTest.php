@@ -24,14 +24,15 @@ class MessengerTest extends KernelTestCase
      * @doesNotThrowException
      *
      * @param Message $message
+     * @param string  $expectedOutput
      */
-    public function shouldSendMessage(Message $message): void
+    public function shouldSendMessage(Message $message, $expectedOutput): void
     {
         ob_start();
         $this->messenger->send($message);
         $output = ob_get_clean();
 
-        $this->assertSame($message->getType(), strtolower($output));
+        $this->assertSame($expectedOutput, $output);
     }
 
     /**
@@ -53,8 +54,17 @@ class MessengerTest extends KernelTestCase
     public function validMessageProvider(): array
     {
         return [
-            'Message to be sent by SMS' => [$this->createMessage(Message::TYPE_SMS)],
-            'Message to be sent by Email' => [$this->createMessage(Message::TYPE_EMAIL)],
+            'Message to be sent by SMS' => [
+                'message' => $this->createMessage(Message::TYPE_SMS),
+
+                'expectedOutput' => strtoupper(Message::TYPE_SMS),
+            ],
+
+            'Message to be sent by Email' => [
+                'message' => $this->createMessage(Message::TYPE_EMAIL),
+
+                'expectedOutput' => strtoupper(Message::TYPE_EMAIL),
+            ],
         ];
     }
 
