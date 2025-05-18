@@ -34,6 +34,22 @@ class MessengerTest extends KernelTestCase
         $this->assertSame($message->getType(), strtolower($output));
     }
 
+    /**
+     * @test
+     */
+    public function shouldThrowAnExceptionIfMessageWithUnsupportedTypeIsGiven(): void
+    {
+        $type = 'unsupported message type';
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf(
+            'Unsupported message type %s',
+            $type
+        ));
+
+        $this->messenger->send($this->createMessage($type));
+    }
+
     public function validMessageProvider(): array
     {
         return [
