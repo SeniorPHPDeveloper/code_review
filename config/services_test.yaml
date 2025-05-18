@@ -1,0 +1,9 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\Service\Messenger:
+        public: true
+        arguments:
+            - !tagged_iterator app.message_sender
