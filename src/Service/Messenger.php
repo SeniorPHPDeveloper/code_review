@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Model\Message;
+use App\Service\MessageSender\SenderInterface;
 
 class Messenger
 {
