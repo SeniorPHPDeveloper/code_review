@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Model\Message;
-use App\Service\MessageSender\SenderInterface;
+use App\Service\MessageSenders\SenderInterface;
 
 class Messenger
 {
@@ -25,6 +25,8 @@ class Messenger
         foreach ($this->senders as $sender) {
             if ($sender->supports($message)) {
                 $sender->send($message);
+
+                return;
             }
         }
 

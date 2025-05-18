@@ -4,9 +4,7 @@ namespace App\Controller;
 
 use App\EntityRepository\CustomerRepository;
 use App\Model\Message;
-use App\Service\EmailSender;
 use App\Service\Messenger;
-use App\Service\SMSSender;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,11 +13,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class CustomerController extends AbstractController
 {
     private CustomerRepository $customerRepository;
+    private Messenger $messenger;
 
     public function __construct(
-        CustomerRepository $customerRepository
+        CustomerRepository $customerRepository,
+        Messenger $messenger,
     ) {
         $this->customerRepository = $customerRepository;
+        $this->messenger = $messenger;
     }
 
     /**
@@ -29,14 +30,16 @@ class CustomerController extends AbstractController
     {
         $requestData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $customer = $this->customerRepository->find($code);
+        $customer = $this->customerRepository->findOneBy(['code' => $code]);
+        if (null === $customer) {
+            return new Response('User not found', Response::HTTP_NOT_FOUND);
+        }
 
         $message = new Message();
         $message->setBody($requestData['body']);
         $message->setType($customer->getNotificationType());
 
-        $messenger = new Messenger([new EmailSender(), new SMSSender()]);
-        $messenger->send($message);
+        $this->messenger->send($message);
 
         return new Response("OK");
     }

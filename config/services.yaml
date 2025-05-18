@@ -27,5 +27,10 @@ services:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    _instanceof:
+        App\Service\MessageSenders\SenderInterface:
+            tags: [ 'app.message_sender' ]
+
+    App\Service\Messenger:
+        arguments:
+            - !tagged_iterator app.message_sender
