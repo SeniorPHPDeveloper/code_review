@@ -34,7 +34,7 @@ class CustomerController extends AbstractController
     }
 
     /**
-     * @Route("/customer/{code}/notifications", name="customer_notifications", methods={"GET"})
+     * @Route("/customer/{code}/notifications", name="customer_notifications", methods={"POST"})
      */
     public function notifyCustomer(string $code, Request $request): Response
     {
