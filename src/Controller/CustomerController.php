@@ -10,6 +10,7 @@ use App\Service\MessageFactory;
 use App\Service\Messenger;
 use App\Service\RequestToDtoConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -36,17 +37,20 @@ class CustomerController extends AbstractController
     /**
      * @Route("/customer/{code}/notifications", name="customer_notifications", methods={"POST"})
      */
-    public function notifyCustomer(string $code, Request $request): Response
+    public function notifyCustomer(string $code, Request $request): JsonResponse
     {
         try {
             $dto = $this->requestToDtoConverter->createFromContextBasedRequest($request, NotificationDto::class);
         } catch (DtoException $e) {
-            return new Response('Invalid request', Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => 'Invalid request', 'status' => 'error'], Response::HTTP_BAD_REQUEST);
         }
 
         $customer = $this->customerRepository->findOneBy(['code' => $code]);
         if (null === $customer) {
-            return new Response('User could not be found', Response::HTTP_NOT_FOUND);
+            return new JsonResponse(
+                ['error' => 'User could not be found', 'status' => 'error'],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         $message = $this->messageFactory->create($dto, $customer->getNotificationType());
@@ -54,9 +58,12 @@ class CustomerController extends AbstractController
         try {
             $this->messenger->send($message);
         } catch (MessengerException $e) {
-            return new Response('Unsupported messenger type', Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(
+                ['error' => 'Unsupported messenger type', 'status' => 'error'],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
-        return new Response("OK");
+        return new JsonResponse(['status' => "OK"]);
     }
 }
